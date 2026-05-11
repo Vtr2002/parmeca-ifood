@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parmeca — Calendário de Campanhas iFood</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bordo: #6B1E2E;
+    --bordo-light: #8B2E42;
+    --bordo-pale: #f5eaec;
+    --bordo-mid: #c4909a;
+    --bege: #F5F0E8;
+    --bege-dark: #E8DFD0;
+    --bege-border: #D4C8B4;
+    --text-dark: #2C1A20;
+    --text-mid: #6B4A52;
+    --text-light: #9B7A84;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--bege);
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
+
+  /* ========== HEADER ========== */
+  .top-bar {
+    background: var(--bordo);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.06em;
+  }
+
+  .brand-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255,255,255,0.3);
+  }
+
+  .brand-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-primary {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    letter-spacing: 0.04em;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary:hover { background: rgba(255,255,255,0.25); }
+
+  /* ========== CONTROLS BAR ========== */
+  .controls-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--bege-border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+  }
+
+  .nav-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-btn {
+    background: none;
+    border: 1px solid var(--bege-border);
+    border-radius: 7px;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-mid);
+    font-size: 16px;
+    transition: background 0.15s;
+    font-family: 'Jost', sans-serif;
+  }
+
+  .nav-btn:hover { background: var(--bege); }
+
+  .month-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--bordo);
+    min-width: 160px;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  .view-toggle {
+    display: flex;
+    border: 1px solid var(--bege-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .view-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--text-mid);
+    font-family: 'Jost', sans-serif;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .view-btn.active {
+    background: var(--bordo);
+    color: #fff;
+  }
+
+  /* ========== SUMMARY BAR ========== */
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 1.2rem 2rem;
+    background: var(--white);
+    border-bottom: 1px solid var(--bege-border);
+  }
+
+  .summary-card {
+    background: var(--bege);
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: center;
+    border: 1px solid var(--bege-border);
+  }
+
+  .summary-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--bordo);
+    line-height: 1;
+  }
+
+  .summary-label {
+    font-size: 10px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  /* ========== MAIN CONTENT ========== */
+  .main {
+    padding: 1.5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ========== CALENDAR VIEW ========== */
+  .calendar-grid {
+    background: var(--white);
+    border: 1px solid var(--bege-border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .cal-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: var(--bordo);
+  }
+
+  .cal-day-name {
+    text-align: center;
+    padding: 10px 4px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+  }
+
+  .cal-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-left: 1px solid var(--bege-border);
+    border-top: 1px solid var(--bege-border);
+  }
+
+  .cal-cell {
+    border-right: 1px solid var(--bege-border);
+    border-bottom: 1px solid var(--bege-border);
+    min-height: 90px;
+    padding: 8px;
+    background: var(--white);
+    vertical-align: top;
+  }
+
+  .cal-cell.other-month {
+    background: var(--bege);
+  }
+
+  .cal-cell.today .day-num {
+    background: var(--bordo);
+    color: #fff;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .day-num {
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-bottom: 5px;
+    font-family: 'Jost', sans-serif;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .campaign-pill {
+    font-size: 10px;
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-bottom: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    font-family: 'Jost', sans-serif;
+    display: block;
+    transition: opacity 0.15s;
+  }
+
+  .campaign-pill:hover { opacity: 0.8; }
+
+  .tipo-promocao    { background: #fde8ec; color: #7a1e30; }
+  .tipo-lancamento  { background: #e8f0fd; color: #1e3a7a; }
+  .tipo-sazonalidade{ background: #fdf5e8; color: #7a5a1e; }
+  .tipo-fidelizacao { background: #e8fde8; color: #1e7a3a; }
+  .tipo-outro       { background: #f0ece4; color: #6b4a52; }
+
+  /* ========== LIST VIEW ========== */
+  .list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .list-item {
+    background: var(--white);
+    border: 1px solid var(--bege-border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .list-item:hover {
+    border-color: var(--bordo-mid);
+    box-shadow: 0 2px 8px rgba(107,30,46,0.08);
+  }
+
+  .list-date-block {
+    text-align: center;
+    min-width: 48px;
+    background: var(--bege);
+    border-radius: 8px;
+    padding: 8px;
+    border: 1px solid var(--bege-border);
+  }
+
+  .list-date-day {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--bordo);
+    line-height: 1;
+  }
+
+  .list-date-mon {
+    font-size: 10px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-family: 'Jost', sans-serif;
+  }
+
+  .list-info { flex: 1; min-width: 0; }
+
+  .list-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-dark);
+    font-family: 'Jost', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .list-meta {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 3px;
+    font-family: 'Jost', sans-serif;
+  }
+
+  .tipo-badge {
+    font-size: 11px;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: 'Jost', sans-serif;
+    white-space: nowrap;
+    letter-spacing: 0.04em;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-light);
+    font-size: 14px;
+    font-family: 'Jost', sans-serif;
+    background: var(--white);
+    border-radius: 14px;
+    border: 1px solid var(--bege-border);
+  }
+
+  .empty-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  /* ========== MODAL ========== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(44,26,32,0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 1rem;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 1.8rem;
+    width: 100%;
+    max-width: 440px;
+    border: 1px solid var(--bege-border);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.4rem;
+  }
+
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bordo);
+    letter-spacing: 0.02em;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text-light);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+
+  .modal-close:hover { background: var(--bege); }
+
+  .form-group { margin-bottom: 14px; }
+
+  .form-label {
+    font-size: 10px;
+    color: var(--text-mid);
+    margin-bottom: 5px;
+    display: block;
+    font-family: 'Jost', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+
+  .form-input {
+    width: 100%;
+    border: 1px solid var(--bege-border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-family: 'Jost', sans-serif;
+    color: var(--text-dark);
+    background: var(--bege);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--bordo-mid); background: #fff; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  select.form-input { cursor: pointer; }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 1.4rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bege-border);
+  }
+
+  .btn-cancel {
+    background: none;
+    border: 1px solid var(--bege-border);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-mid);
+    font-family: 'Jost', sans-serif;
+    transition: background 0.15s;
+  }
+
+  .btn-cancel:hover { background: var(--bege); }
+
+  .btn-save {
+    background: var(--bordo);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 22px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+    transition: background 0.15s;
+    letter-spacing: 0.03em;
+  }
+
+  .btn-save:hover { background: var(--bordo-light); }
+
+  .btn-danger {
+    background: #c0392b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Jost', sans-serif;
+  }
+
+  /* ========== DETAIL MODAL ========== */
+  .detail-section {
+    background: var(--bege);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+    font-family: 'Jost', sans-serif;
+    border-bottom: 1px solid var(--bege-border);
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+
+  .detail-key {
+    color: var(--text-light);
+    min-width: 80px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-top: 1px;
+  }
+
+  .detail-val {
+    color: var(--text-dark);
+    font-weight: 400;
+    flex: 1;
+  }
+
+  /* ========== LEGEND ========== */
+  .legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-mid);
+    font-family: 'Jost', sans-serif;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
+  /* ========== PRINT ========== */
+  @media print {
+    .top-bar .btn-primary,
+    .controls-bar .btn-primary,
+    .header-actions,
+    .view-toggle { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="brand">
+    <div class="brand-logo">🍝</div>
+    <div class="brand-name">Parmeca</div>
+    <div class="brand-divider"></div>
+    <div class="brand-sub">Campanhas iFood</div>
+  </div>
+  <div class="header-actions">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fde8ec;border:1px solid #c4909a"></div>Promoção</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e8f0fd;border:1px solid #90a4c4"></div>Lançamento</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fdf5e8;border:1px solid #c4b490"></div>Sazonalidade</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e8fde8;border:1px solid #90c490"></div>Fidelização</div>
+    </div>
+    <button class="btn-primary" onclick="openModal()">+ Nova campanha</button>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-group">
+    <button class="nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+    <span class="month-label" id="month-label"></span>
+    <button class="nav-btn" onclick="changeMonth(1)">&#8250;</button>
+  </div>
+  <div class="view-toggle">
+    <button class="view-btn active" id="btn-cal" onclick="setView('cal')">Calendário</button>
+    <button class="view-btn" id="btn-list" onclick="setView('list')">Lista</button>
+  </div>
+</div>
+
+<div class="summary-bar" id="summary-bar"></div>
+
+<div class="main" id="view-area"></div>
+
+<!-- MODAL NOVA CAMPANHA -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nova campanha</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nome da campanha *</label>
+      <input class="form-input" id="f-nome" placeholder="ex: Pizza do mês com 20% off" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Data início *</label>
+        <input class="form-input" id="f-inicio" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Data fim</label>
+        <input class="form-input" id="f-fim" type="date" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo</label>
+      <select class="form-input" id="f-tipo">
+        <option value="promocao">Promoção</option>
+        <option value="lancamento">Lançamento</option>
+        <option value="sazonalidade">Sazonalidade</option>
+        <option value="fidelizacao">Fidelização</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Desconto / Benefício</label>
+      <input class="form-input" id="f-desconto" placeholder="ex: 20% off, frete grátis, brinde" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Observação</label>
+      <input class="form-input" id="f-obs" placeholder="ex: válido apenas sexta e sábado" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveCampaign()">Salvar campanha</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALHE -->
+<div class="modal-overlay" id="detail-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="detail-title"></div>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-section" id="detail-content"></div>
+    <div class="modal-actions">
+      <button class="btn-danger" onclick="deleteFromDetail()">Excluir</button>
+      <button class="btn-cancel" onclick="closeDetail()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== DADOS ==========
+// Para adicionar campanhas manualmente, edite o array CAMPAIGNS abaixo
+// Cada campanha segue o formato:
+// { nome, inicio (YYYY-MM-DD), fim (YYYY-MM-DD ou ''), tipo, desconto, obs, id }
+// Tipos disponíveis: promocao | lancamento | sazonalidade | fidelizacao | outro
+
+var CAMPAIGNS = [
+  // ADICIONE SUAS CAMPANHAS AQUI
+  // Exemplo:
+  // { nome: 'Dia das Mães – Especial Lasanha', inicio: '2026-05-11', fim: '2026-05-11', tipo: 'sazonalidade', desconto: '15% off + sobremesa', obs: 'Só no domingo', id: 1 },
+];
+
+// ========== CONFIG ==========
+var MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var MONTHS_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+var DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+var TIPOS = {
+  promocao:    { label: 'Promoção',    bg: '#fde8ec', color: '#7a1e30' },
+  lancamento:  { label: 'Lançamento',  bg: '#e8f0fd', color: '#1e3a7a' },
+  sazonalidade:{ label: 'Sazonalidade',bg: '#fdf5e8', color: '#7a5a1e' },
+  fidelizacao: { label: 'Fidelização', bg: '#e8fde8', color: '#1e7a3a' },
+  outro:       { label: 'Outro',       bg: '#f0ece4', color: '#6b4a52' }
+};
+
+var today = new Date();
+var curYear = today.getFullYear();
+var curMonth = today.getMonth();
+var view = 'cal';
+var detailIdx = null;
+var campaigns = [];
+
+// Carrega do localStorage + array fixo
+function loadCampaigns() {
+  try {
+    var saved = JSON.parse(localStorage.getItem('parmeca_v2') || '[]');
+    // Mescla: fixos + salvos, sem duplicar por id
+    var ids = saved.map(function(c){ return c.id; });
+    var merged = saved.slice();
+    CAMPAIGNS.forEach(function(c){
+      if (ids.indexOf(c.id) === -1) merged.push(c);
+    });
+    campaigns = merged;
+  } catch(e) {
+    campaigns = CAMPAIGNS.slice();
+  }
+  campaigns.sort(function(a,b){ return a.inicio.localeCompare(b.inicio); });
+}
+
+function saveDB() {
+  try { localStorage.setItem('parmeca_v2', JSON.stringify(campaigns)); } catch(e){}
+}
+
+// ========== VIEW TOGGLE ==========
+function setView(v) {
+  view = v;
+  document.getElementById('btn-cal').className = 'view-btn' + (v==='cal'?' active':'');
+  document.getElementById('btn-list').className = 'view-btn' + (v==='list'?' active':'');
+  render();
+}
+
+function changeMonth(d) {
+  curMonth += d;
+  if (curMonth > 11) { curMonth = 0; curYear++; }
+  if (curMonth < 0)  { curMonth = 11; curYear--; }
+  render();
+}
+
+// ========== SUMMARY ==========
+function getMonthCampaigns(y, m) {
+  var ms = y+'-'+pad(m+1)+'-01';
+  var me = y+'-'+pad(m+1)+'-31';
+  return campaigns.filter(function(c){
+    return c.inicio <= me && (!c.fim || c.fim >= ms);
+  });
+}
+
+function renderSummary() {
+  var mc = getMonthCampaigns(curYear, curMonth);
+  var counts = { promocao:0, lancamento:0, sazonalidade:0, fidelizacao:0, outro:0 };
+  mc.forEach(function(c){ if(counts[c.tipo]!==undefined) counts[c.tipo]++; else counts.outro++; });
+  document.getElementById('summary-bar').innerHTML =
+    '<div class="summary-card"><div class="summary-num">'+mc.length+'</div><div class="summary-label">Total do mês</div></div>'+
+    '<div class="summary-card"><div class="summary-num" style="color:#7a1e30">'+counts.promocao+'</div><div class="summary-label">Promoções</div></div>'+
+    '<div class="summary-card"><div class="summary-num" style="color:#1e3a7a">'+counts.lancamento+'</div><div class="summary-label">Lançamentos</div></div>'+
+    '<div class="summary-card"><div class="summary-num" style="color:#1e7a3a">'+(counts.fidelizacao+counts.sazonalidade+counts.outro)+'</div><div class="summary-label">Outros tipos</div></div>';
+}
+
+// ========== CALENDAR ==========
+function getDayCampaigns(y, m, d) {
+  var str = y+'-'+pad(m+1)+'-'+pad(d);
+  return campaigns.filter(function(c){ return c.inicio <= str && (!c.fim || c.fim >= str); });
+}
+
+function renderCalendar() {
+  document.getElementById('month-label').textContent = MONTHS[curMonth]+' '+curYear;
+  var firstDay = new Date(curYear, curMonth, 1).getDay();
+  var daysInMonth = new Date(curYear, curMonth+1, 0).getDate();
+  var prevDays = new Date(curYear, curMonth, 0).getDate();
+  var todayStr = today.getFullYear()+'-'+pad(today.getMonth()+1)+'-'+pad(today.getDate());
+
+  var cells = [];
+  for (var i = firstDay-1; i >= 0; i--) cells.push({d: prevDays-i, cur: false});
+  for (var i = 1; i <= daysInMonth; i++) cells.push({d: i, cur: true});
+  while (cells.length % 7 !== 0) cells.push({d: cells.length-daysInMonth-firstDay+1, cur: false});
+
+  var html = '<div class="calendar-grid"><div class="cal-header">';
+  DAYS.forEach(function(d){ html += '<div class="cal-day-name">'+d+'</div>'; });
+  html += '</div><div class="cal-body">';
+
+  cells.forEach(function(cell){
+    var isToday = cell.cur && curYear+'-'+pad(curMonth+1)+'-'+pad(cell.d) === todayStr;
+    var camps = cell.cur ? getDayCampaigns(curYear, curMonth, cell.d) : [];
+    html += '<div class="cal-cell'+(cell.cur?'':' other-month')+(isToday?' today':'')+'"><div class="day-num">'+cell.d+'</div>';
+    camps.forEach(function(c){
+      var idx = campaigns.indexOf(c);
+      html += '<span class="campaign-pill tipo-'+c.tipo+'" onclick="openDetail('+idx+')" title="'+esc(c.nome)+'">'+esc(c.nome)+'</span>';
+    });
+    html += '</div>';
+  });
+
+  html += '</div></div>';
+  document.getElementById('view-area').innerHTML = html;
+}
+
+// ========== LIST VIEW ==========
+function renderList() {
+  document.getElementById('month-label').textContent = MONTHS[curMonth]+' '+curYear;
+  var mc = getMonthCampaigns(curYear, curMonth);
+  if (mc.length === 0) {
+    document.getElementById('view-area').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">📋</div>Nenhuma campanha em '+MONTHS[curMonth]+'.<br>Clique em "+ Nova campanha" para adicionar.</div>';
+    return;
+  }
+  var html = '<div class="list-view">';
+  mc.forEach(function(c){
+    var idx = campaigns.indexOf(c);
+    var t = TIPOS[c.tipo] || TIPOS.outro;
+    var parts = c.inicio.split('-');
+    var mon = MONTHS_SHORT[parseInt(parts[1])-1];
+    var range = (c.fim && c.fim !== c.inicio) ? fmtDate(c.inicio)+' – '+fmtDate(c.fim) : fmtDate(c.inicio);
+    html += '<div class="list-item" onclick="openDetail('+idx+')">'+
+      '<div class="list-date-block"><div class="list-date-day">'+parts[2]+'</div><div class="list-date-mon">'+mon+'</div></div>'+
+      '<div class="list-info"><div class="list-title">'+esc(c.nome)+'</div>'+
+      '<div class="list-meta">'+range+(c.desconto?' · '+esc(c.desconto):'')+'</div></div>'+
+      '<span class="tipo-badge" style="background:'+t.bg+';color:'+t.color+'">'+t.label+'</span>'+
+      '</div>';
+  });
+  html += '</div>';
+  document.getElementById('view-area').innerHTML = html;
+}
+
+// ========== MODAL ==========
+function openModal() {
+  document.getElementById('f-nome').value = '';
+  document.getElementById('f-inicio').value = '';
+  document.getElementById('f-fim').value = '';
+  document.getElementById('f-tipo').value = 'promocao';
+  document.getElementById('f-desconto').value = '';
+  document.getElementById('f-obs').value = '';
+  document.getElementById('modal-overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('f-nome').focus(); }, 50);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function saveCampaign() {
+  var nome = document.getElementById('f-nome').value.trim();
+  var inicio = document.getElementById('f-inicio').value;
+  if (!nome || !inicio) { alert('Preencha o nome e a data de início.'); return; }
+  campaigns.push({
+    nome: nome,
+    inicio: inicio,
+    fim: document.getElementById('f-fim').value,
+    tipo: document.getElementById('f-tipo').value,
+    desconto: document.getElementById('f-desconto').value.trim(),
+    obs: document.getElementById('f-obs').value.trim(),
+    id: Date.now()
+  });
+  campaigns.sort(function(a,b){ return a.inicio.localeCompare(b.inicio); });
+  saveDB();
+  closeModal();
+  render();
+}
+
+// ========== DETAIL ==========
+function openDetail(idx) {
+  detailIdx = idx;
+  var c = campaigns[idx];
+  var t = TIPOS[c.tipo] || TIPOS.outro;
+  document.getElementById('detail-title').textContent = c.nome;
+  var html = '';
+  html += '<div class="detail-row"><span class="detail-key">Tipo</span><span class="detail-val"><span class="tipo-badge" style="background:'+t.bg+';color:'+t.color+'">'+t.label+'</span></span></div>';
+  html += '<div class="detail-row"><span class="detail-key">Início</span><span class="detail-val">'+fmtDate(c.inicio)+'</span></div>';
+  if (c.fim) html += '<div class="detail-row"><span class="detail-key">Fim</span><span class="detail-val">'+fmtDate(c.fim)+'</span></div>';
+  if (c.desconto) html += '<div class="detail-row"><span class="detail-key">Benefício</span><span class="detail-val">'+esc(c.desconto)+'</span></div>';
+  if (c.obs) html += '<div class="detail-row"><span class="detail-key">Obs.</span><span class="detail-val">'+esc(c.obs)+'</span></div>';
+  document.getElementById('detail-content').innerHTML = html;
+  document.getElementById('detail-overlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-overlay').classList.remove('open');
+  detailIdx = null;
+}
+
+function deleteFromDetail() {
+  if (detailIdx === null) return;
+  if (confirm('Excluir "'+campaigns[detailIdx].nome+'"?')) {
+    campaigns.splice(detailIdx, 1);
+    saveDB(); closeDetail(); render();
+  }
+}
+
+// ========== HELPERS ==========
+function pad(n){ return String(n).padStart(2,'0'); }
+function fmtDate(s){ if(!s) return ''; var p=s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render() {
+  renderSummary();
+  if (view === 'cal') renderCalendar();
+  else renderList();
+}
+
+// Fecha modal com ESC
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') { closeModal(); closeDetail(); }
+});
+
+loadCampaigns();
+render();
+</script>
+</body>
+</html>
